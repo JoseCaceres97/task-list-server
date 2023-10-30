@@ -14,6 +14,26 @@ const tasks = [
   },
 ];
 
+listViewRouter.param('status', (req, res, next, status) => {
+    if (status !== 'completed' && status !== 'incomplete') {
+      return res.status(400).send("Parámetros no válidos.");
+    }
+    next();
+  });
+
+  listViewRouter.get('/:status', (req, res) => {
+
+    const status = req.params.status;
+  
+    if (status === 'completed') {
+      const completedTasks = tasks.filter(task => task.isCompleted);
+      res.json(completedTasks);
+    } else if (status === 'incomplete') {
+      const incompleteTasks = tasks.filter(task => !task.isCompleted);
+      res.json(incompleteTasks);
+    }
+  });
+
 listViewRouter.get('/completed', (req, res) => {
   const completedTasks = tasks.filter(task => task.isCompleted);
   res.json(completedTasks);

@@ -14,6 +14,21 @@ const tasks = [
   },
 ];
 
+listEditRouter.use((req, res, next) => {
+    if ((req.method === 'POST' || req.method === 'PUT') && !req.body) {
+      return res.status(400).send("Solicitud con cuerpo vacío.");
+    }
+  
+    if (req.method === 'POST' || req.method === 'PUT') {
+      const { id, isCompleted, description } = req.body;
+      if (!id || typeof isCompleted !== 'boolean' || !description) {
+        return res.status(400).send("Solicitud con información no válida o atributos faltantes para crear tareas.");
+      }
+    }
+  
+    next();
+  });
+
 listEditRouter.post('/create', (req, res) => {
   const newTask = req.body; 
   tasks.push(newTask);
