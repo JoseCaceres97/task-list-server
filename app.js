@@ -1,20 +1,14 @@
 const express = require('express');
 const app = express();
-const port = 3000; 
+const port = 3000;
 
 app.use(express.json());
 
-const tasks = [
-  {
-    id: '123456',
-    isCompleted: false,
-    description: 'Walk the dog',
-  },
-];
+const listViewRouter = require('./list-view-router');
+const listEditRouter = require('./list-edit-router');
 
-app.get('/tasks', (req, res) => {
-  res.json(tasks);
-});
+app.use('/list-view', listViewRouter); 
+app.use('/list-edit', listEditRouter); 
 
 app.listen(port, () => {
   console.log(`Servidor Express escuchando en el puerto ${port}`);
