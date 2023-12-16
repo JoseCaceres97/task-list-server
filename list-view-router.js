@@ -1,19 +1,36 @@
 const express = require('express');
 const listViewRouter = express.Router();
 
+//LISTA DE TAREAS
 const tasks = [
   {
     id: '1',
     isCompleted: true,
-    description: 'Complete task 1',
+    description: 'Correr 2 kms',
   },
   {
     id: '2',
     isCompleted: false,
-    description: 'Incomplete task 2',
+    description: 'Pagar servicios',
+  },
+  {
+    id: '3',
+    isCompleted: false,
+    description: 'Mercar',
+  },
+  {
+    id: '4',
+    isCompleted: true,
+    description: 'Enviar e-mails',
+  },
+  {
+    id: '5',
+    isCompleted: true,
+    description: 'Lavar ropa',
   },
 ];
 
+//
 listViewRouter.param('status', (req, res, next, status) => {
     if (status !== 'completed' && status !== 'incomplete') {
       return res.status(400).send("Parámetros no válidos.");

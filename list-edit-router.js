@@ -1,18 +1,35 @@
 const express = require('express');
 const listEditRouter = express.Router();
 
+//LISTA DE TAREAS
 const tasks = [
   {
     id: '1',
     isCompleted: true,
-    description: 'Complete task 1',
+    description: 'Correr 2 kms',
   },
   {
     id: '2',
     isCompleted: false,
-    description: 'Incomplete task 2',
+    description: 'Pagar servicios',
+  },
+  {
+    id: '3',
+    isCompleted: false,
+    description: 'Mercar',
+  },
+  {
+    id: '4',
+    isCompleted: true,
+    description: 'Enviar e-mails',
+  },
+  {
+    id: '5',
+    isCompleted: true,
+    description: 'Lavar ropa',
   },
 ];
+
 
 listEditRouter.use((req, res, next) => {
     if ((req.method === 'POST' || req.method === 'PUT') && !req.body) {
@@ -29,13 +46,15 @@ listEditRouter.use((req, res, next) => {
     next();
   });
 
+
+  //CREAR TAREAR
 listEditRouter.post('/create', (req, res) => {
   const newTask = req.body; 
   tasks.push(newTask);
   res.json(newTask);
 });
 
-
+//ELIMINAR TAREA
 listEditRouter.delete('/delete/:id', (req, res) => {
   const taskId = req.params.id;
   const taskIndex = tasks.findIndex(task => task.id === taskId);
@@ -48,6 +67,7 @@ listEditRouter.delete('/delete/:id', (req, res) => {
   }
 });
 
+//ACTUALIZAR TAREAS
 listEditRouter.put('/update/:id', (req, res) => {
   const taskId = req.params.id;
   const updatedTask = req.body; 
