@@ -1,41 +1,33 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-//LISTA DE TAREAS
-const tasks = [
-  {
-    id: '1',
-    isCompleted: true,
-    description: 'Correr 2 kms',
-  },
-  {
-    id: '2',
-    isCompleted: false,
-    description: 'Pagar servicios',
-  },
-  {
-    id: '3',
-    isCompleted: false,
-    description: 'Mercar',
-  },
-  {
-    id: '4',
-    isCompleted: true,
-    description: 'Enviar e-mails',
-  },
-  {
-    id: '5',
-    isCompleted: true,
-    description: 'Lavar ropa',
-  },
+const users = [
+  { username: 'jose', password: '1234' },
+  { username: 'mentor', password: '2023' },
 ];
 
-// LISTAR TODAS LAS TAREAS
+// MIDDLEWATE PARA LA AUTENTICACION Y GENEREACION DEL JWT
+function authenticateUser(req, res, next) {
+  const { username, password } = req.body;
+  const user = users.find(user => user.username === username && user.password === password);
+  if (!user) {
+    return res.status(401).json({ error: 'Credenciales inválidas' });
+  }
+  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  req.token = token;
+  next();
+}
+
+// RUTAS
+router.post('/login', authenticateUser, (req, res) => {
+  res.json({ message: 'Ruta protegida de login', token: req.token });
+});
+
 router.get('/tasks', (req, res) => {
   res.json(tasks);
 });
 
-// LISTAR POR ID
 router.get('/tasks/:id', (req, res) => {
   const taskId = req.params.id;
   const task = tasks.find(task => task.id === taskId);
@@ -47,14 +39,12 @@ router.get('/tasks/:id', (req, res) => {
   }
 });
 
-// CREAR UNA NUEVA TAREA
 router.post('/tasks', (req, res) => {
   const newTask = req.body;
   tasks.push(newTask);
-  res.status(201).json({ message: 'Tarea Creada', })
+  res.status(201).json({ message: 'Tarea Creada' });
 });
 
-// ACTUALIZAR TAREAS
 router.put('/tasks/:id', (req, res) => {
   const taskId = req.params.id;
   const updatedTask = req.body;
@@ -68,7 +58,6 @@ router.put('/tasks/:id', (req, res) => {
   }
 });
 
-// ELIMINAR TAREAS
 router.delete('/tasks/:id', (req, res) => {
   const taskId = req.params.id;
   const taskIndex = tasks.findIndex(task => task.id === taskId);
@@ -81,13 +70,11 @@ router.delete('/tasks/:id', (req, res) => {
   }
 });
 
-// LISTAR TAREAS COMPLETADAS
 router.get('/tasks/completed', (req, res) => {
   const completedTasks = tasks.filter(task => task.isCompleted);
   res.json(completedTasks);
 });
 
-// LISTAR TAREAS INCOMPLETAS
 router.get('/tasks/incomplete', (req, res) => {
   const incompleteTasks = tasks.filter(task => !task.isCompleted);
   res.json(incompleteTasks);
